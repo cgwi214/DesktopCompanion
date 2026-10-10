@@ -1,0 +1,56 @@
+// ============================================================================
+//  BuildConfig.h.in — 编译期能力配置（由 CMake 生成）
+//
+//  需求依据：SRS V1.1 6.2（平台适配要求）
+//    「以能力探测结果控制功能入口」
+//  能力探测分两层：
+//    1. 编译期：本文件，由 CMake 探测结果决定哪些模块被编进程序
+//    2. 运行期：platform/SystemInfo（系统 API 是否真的可用）
+//  两层都必须通过，功能入口才开放，避免「编译时有、运行时炸」。
+// ============================================================================
+#pragma once
+
+// 由 CMake configure_file 替换的宏
+#define DC_BUILD_APP_VERSION   "@PROJECT_VERSION@"
+#define DC_BUILD_QT_VERSION    "@Qt6_VERSION@"
+#define DC_BUILD_COMPILER      "@CMAKE_CXX_COMPILER_ID@ @CMAKE_CXX_COMPILER_VERSION@"
+#define DC_BUILD_TYPE          "@CMAKE_BUILD_TYPE@"
+#define DC_BUILD_SYSTEM        "@CMAKE_SYSTEM_NAME@"
+#define DC_BUILD_ARCH          "@CMAKE_SYSTEM_PROCESSOR@"
+#define DC_BUILD_DATE          "@DC_BUILD_TIMESTAMP@"
+
+// 可选模块编译开关（CMake 已在编译命令行同时定义，这里给出默认值兜底，
+// 以便在 IDE 里单独索引本文件时不报未定义）
+#ifndef DC_ENABLE_SPEECH
+#  define DC_ENABLE_SPEECH 1
+#endif
+#ifndef DC_ENABLE_RECORDING
+#  define DC_ENABLE_RECORDING 1
+#endif
+#ifndef DC_ENABLE_NETWORK
+#  define DC_ENABLE_NETWORK 1
+#endif
+#ifndef DC_ENABLE_LEGACY_GUARD
+#  define DC_ENABLE_LEGACY_GUARD 1
+#endif
+
+namespace dc {
+namespace buildinfo {
+
+// 便于运行时向用户展示构建信息（设置页「关于」）
+inline constexpr const char *kAppVersion  = DC_BUILD_APP_VERSION;
+inline constexpr const char *kQtVersion   = DC_BUILD_QT_VERSION;
+inline constexpr const char *kCompiler    = DC_BUILD_COMPILER;
+inline constexpr const char *kBuildType   = DC_BUILD_TYPE;
+inline constexpr const char *kBuildSystem = DC_BUILD_SYSTEM;
+inline constexpr const char *kBuildArch   = DC_BUILD_ARCH;
+inline constexpr const char *kBuildDate   = DC_BUILD_DATE;
+
+// 编译期能力开关
+inline constexpr bool kSpeechCompiled    = (DC_ENABLE_SPEECH != 0);
+inline constexpr bool kRecordingCompiled = (DC_ENABLE_RECORDING != 0);
+inline constexpr bool kNetworkCompiled   = (DC_ENABLE_NETWORK != 0);
+inline constexpr bool kLegacyGuardCompiled = (DC_ENABLE_LEGACY_GUARD != 0);
+
+} // namespace buildinfo
+} // namespace dc
