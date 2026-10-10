@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "id": "default",
+  "displayName": {
+    "zh-CN": "默认小伙伴",
+    "en-US": "Default Buddy",
+    "ja-JP": "デフォルトの相棒"
+  },
+  "description": {
+    "zh-CN": "程序化绘制的扁平风格内置形象，6 个状态各一组序列帧。",
+    "en-US": "Procedurally drawn flat-style built-in character, one frame sequence per state.",
+    "ja-JP": "プログラムで描画したフラット調の内蔵キャラクター。状態ごとに連番フレーム。"
+  },
+  "canvas": 256,
+  "anchor": "bottom-center",
+  "animations": {
+    "idle": {
+      "frameCount": 6,
+      "frameIntervalMs": 220,
+      "loop": true
+    },
+    "talking": {
+      "frameCount": 6,
+      "frameIntervalMs": 150,
+      "loop": true
+    },
+    "working": {
+      "frameCount": 6,
+      "frameIntervalMs": 140,
+      "loop": true
+    },
+    "success": {
+      "frameCount": 8,
+      "frameIntervalMs": 130,
+      "loop": true
+    },
+    "failure": {
+      "frameCount": 6,
+      "frameIntervalMs": 200,
+      "loop": true
+    },
+    "listening": {
+      "frameCount": 6,
+      "frameIntervalMs": 160,
+      "loop": true
+    }
+  },
+  "_comment": "本目录下的 PNG 由 tools/gen_pet_skin.py 生成，skin.json 只声明帧间隔，实际帧数以目录内文件数为准（见 PetRenderer::loadSkinManifest）。"
+}

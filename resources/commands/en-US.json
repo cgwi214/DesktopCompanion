@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "//": "======================================================================",
+  "//_1": "Desktop Companion — built-in command rules (English)",
+  "//_2": "See zh-CN.json for the full field documentation.",
+  "//_3": "",
+  "//_4": "Design note: patterns are kept deliberately narrow. A desktop",
+  "//_5": "assistant that matches 'open {anything}' becomes a back door; the",
+  "//_6": "alias table is the whitelist that keeps that from happening.",
+  "//_7": "======================================================================",
+  "aliases": {
+    "app": {
+      "browser": "browser",
+      "web browser": "browser",
+      "chrome": "chrome",
+      "google chrome": "chrome",
+      "edge": "edge",
+      "microsoft edge": "edge",
+      "firefox": "firefox",
+      "notepad": "notepad",
+      "calculator": "calculator",
+      "calc": "calculator",
+      "explorer": "explorer",
+      "file manager": "explorer",
+      "terminal": "terminal",
+      "cmd": "terminal",
+      "command prompt": "terminal",
+      "task manager": "taskmgr",
+      "paint": "mspaint",
+      "control panel": "control",
+      "settings": "settings"
+    },
+    "folder": {
+      "desktop": "desktop",
+      "documents": "documents",
+      "my documents": "documents",
+      "downloads": "downloads",
+      "home": "home",
+      "home directory": "home"
+    },
+    "search_engine": {
+      "baidu": "baidu",
+      "bing": "bing",
+      "google": "google"
+    }
+  },
+  "rules": [
+    {
+      "id": "open_browser",
+      "language": "en-US",
+      "patterns": [
+        "open browser",
+        "open the browser",
+        "launch browser",
+        "start browser"
+      ],
+      "intent": "open_application",
+      "parameters": {
+        "app_id": {
+          "source": "constant",
+          "value": "browser"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 10,
+      "category": "app",
+      "description": "Launch the system default browser."
+    },
+    {
+      "id": "open_application_by_name",
+      "language": "en-US",
+      "patterns": [
+        "open {app}",
+        "launch {app}",
+        "start {app}",
+        "run {app}"
+      ],
+      "intent": "open_application",
+      "parameters": {
+        "app_raw": {
+          "source": "slot",
+          "slot": "app",
+          "required": true
+        },
+        "app_id": {
+          "source": "alias_map",
+          "table": "app"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 5,
+      "category": "app",
+      "description": "Launch an application listed in the alias table."
+    },
+    {
+      "id": "open_folder",
+      "language": "en-US",
+      "patterns": [
+        "open {folder} folder",
+        "open my {folder}",
+        "go to {folder}"
+      ],
+      "intent": "open_path",
+      "parameters": {
+        "folder_raw": {
+          "source": "slot",
+          "slot": "folder",
+          "required": true
+        },
+        "target": {
+          "source": "alias_map",
+          "table": "folder"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 8,
+      "category": "file",
+      "description": "Open a standard user folder."
+    },
+    {
+      "id": "open_path_absolute",
+      "language": "en-US",
+      "patterns": [
+        "open path {path}",
+        "open file {path}"
+      ],
+      "intent": "open_path",
+      "parameters": {
+        "target": {
+          "source": "slot",
+          "slot": "path",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 3,
+      "category": "file",
+      "description": "Open an explicit path. Must fall inside the allowed-directory whitelist."
+    },
+    {
+      "id": "reveal_path",
+      "language": "en-US",
+      "patterns": [
+        "reveal {path}",
+        "show {path} in folder",
+        "show in folder {path}"
+      ],
+      "intent": "reveal_path",
+      "parameters": {
+        "target": {
+          "source": "slot",
+          "slot": "path",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 5,
+      "category": "file",
+      "description": "Reveal a file in the system file manager."
+    },
+    {
+      "id": "web_search",
+      "language": "en-US",
+      "patterns": [
+        "search for {query}",
+        "search {query}",
+        "google {query}",
+        "look up {query}",
+        "find {query}"
+      ],
+      "intent": "web_search",
+      "parameters": {
+        "query": {
+          "source": "slot",
+          "slot": "query",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 20,
+      "category": "search",
+      "description": "Search the web. Subject to the network permission mode."
+    },
+    {
+      "id": "translate_auto",
+      "language": "en-US",
+      "patterns": [
+        "translate {text}",
+        "translate this {text}"
+      ],
+      "intent": "translate",
+      "parameters": {
+        "text": {
+          "source": "slot",
+          "slot": "text",
+          "required": true
+        },
+        "target_lang": {
+          "source": "constant",
+          "value": "zh-CN"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "translate",
+      "description": "Translate to Chinese."
+    },
+    {
+      "id": "translate_to_ja",
+      "language": "en-US",
+      "patterns": [
+        "translate {text} to japanese",
+        "translate into japanese {text}"
+      ],
+      "intent": "translate",
+      "parameters": {
+        "text": {
+          "source": "slot",
+          "slot": "text",
+          "required": true
+        },
+        "target_lang": {
+          "source": "constant",
+          "value": "ja-JP"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 25,
+      "category": "translate",
+      "description": "Translate to Japanese."
+    },
+    {
+      "id": "start_recording",
+      "language": "en-US",
+      "patterns": [
+        "start recording",
+        "record audio",
+        "record",
+        "start audio recording"
+      ],
+      "intent": "record_audio",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "start"
+        }
+      },
+      "risk_level": "medium",
+      "confirmation": true,
+      "priority": 20,
+      "category": "system",
+      "description": "Start recording. Always requires explicit confirmation."
+    },
+    {
+      "id": "stop_recording",
+      "language": "en-US",
+      "patterns": [
+        "stop recording",
+        "stop the recording",
+        "end recording"
+      ],
+      "intent": "record_audio",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "stop"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 30,
+      "category": "system",
+      "description": "Stop recording. Never requires confirmation — stopping must always be frictionless."
+    },
+    {
+      "id": "system_info",
+      "language": "en-US",
+      "patterns": [
+        "system info",
+        "system information",
+        "show system info",
+        "my system"
+      ],
+      "intent": "system_info",
+      "parameters": {},
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 10,
+      "category": "system",
+      "description": "Show OS, architecture and capability probe results."
+    },
+    {
+      "id": "pet_hide",
+      "language": "en-US",
+      "patterns": [
+        "hide",
+        "hide yourself",
+        "go away",
+        "hide pet"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "hide"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "pet",
+      "description": "Hide the pet window."
+    },
+    {
+      "id": "pet_show",
+      "language": "en-US",
+      "patterns": [
+        "show",
+        "show yourself",
+        "come out",
+        "show pet"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "show"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "pet",
+      "description": "Show the pet window."
+    },
+    {
+      "id": "pet_open_settings",
+      "language": "en-US",
+      "patterns": [
+        "settings",
+        "open settings",
+        "preferences",
+        "open preferences"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "settings"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 25,
+      "category": "pet",
+      "description": "Open the settings window."
+    },
+    {
+      "id": "pet_open_history",
+      "language": "en-US",
+      "patterns": [
+        "history",
+        "open history",
+        "show history",
+        "history records"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "history"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 20,
+      "category": "pet",
+      "description": "Open the history window."
+    },
+    {
+      "id": "help",
+      "language": "en-US",
+      "patterns": [
+        "help",
+        "what can you do",
+        "how do i use you",
+        "commands"
+      ],
+      "intent": "help",
+      "parameters": {},
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 30,
+      "category": "pet",
+      "description": "Show the capability list and usage hints."
+    }
+  ]
+}

@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "//": "======================================================================",
+  "//_1": "Desktop Companion — 内置命令规则（简体中文）",
+  "//_2": "",
+  "//_3": "需求依据：SRS V1.1 4.6（命令引擎）",
+  "//_4": "",
+  "//_5": "本文件是纯数据，用户可以自由增删改。修改后：",
+  "//_6": "  - 托盘菜单 -> 重新加载命令规则",
+  "//_7": "  - 或 设置 -> 命令 -> 重新加载规则",
+  "//_8": "无需重启程序。",
+  "//_9": "",
+  "//_10": "字段说明：",
+  "//_11": "  id           唯一标识。改动它会让「记住授权」失效，慎重。",
+  "//_12": "  language     规则适用语言（zh-CN / en-US / ja-JP）。",
+  "//_13": "               留空表示任意语言都适用。",
+  "//_14": "  patterns     触发模式。可以含 {占位符}，如「打开{app}」。",
+  "//_15": "  intent       意图名。它决定了这条命令会走哪个服务：",
+  "//_16": "                 open_application  启动应用",
+  "//_17": "                 open_path         打开文件/目录",
+  "//_18": "                 reveal_path       在文件管理器中定位",
+  "//_19": "                 web_search        浏览器搜索",
+  "//_20": "                 translate         翻译",
+  "//_21": "                 record_audio      录音",
+  "//_22": "                 system_info       系统信息",
+  "//_23": "                 pet_control       桌宠自身控制",
+  "//_24": "                 help              帮助",
+  "//_25": "  parameters   参数来源。三种 source：",
+  "//_26": "                 constant   固定值（value 字段）",
+  "//_27": "                 slot       从占位符位置取（slot 字段）",
+  "//_28": "                 alias_map  用别名表映射（table 字段）",
+  "//_29": "  risk_level   low / medium / high / forbidden",
+  "//_30": "               ★ high 与 forbidden 的操作不会被静默执行。",
+  "//_31": "  confirmation true 表示即使低风险也要用户确认。",
+  "//_32": "  priority     数值越大越优先。用于消解「两个模式都能匹配」的情况。",
+  "//_33": "  category     分组标签，仅用于文档与界面归类。",
+  "//_34": "======================================================================",
+  "aliases": {
+    "app": {
+      "浏览器": "browser",
+      "网络浏览器": "browser",
+      "browser": "browser",
+      "chrome": "chrome",
+      "谷歌浏览器": "chrome",
+      "edge": "edge",
+      "微软浏览器": "edge",
+      "firefox": "firefox",
+      "火狐": "firefox",
+      "记事本": "notepad",
+      "notepad": "notepad",
+      "计算器": "calculator",
+      "calculator": "calculator",
+      "资源管理器": "explorer",
+      "文件管理器": "explorer",
+      "我的电脑": "explorer",
+      "explorer": "explorer",
+      "终端": "terminal",
+      "命令行": "terminal",
+      "cmd": "terminal",
+      "terminal": "terminal",
+      "任务管理器": "taskmgr",
+      "taskmgr": "taskmgr",
+      "画图": "mspaint",
+      "mspaint": "mspaint",
+      "控制面板": "control",
+      "control": "control",
+      "设置": "settings",
+      "settings": "settings"
+    },
+    "folder": {
+      "桌面": "desktop",
+      "desktop": "desktop",
+      "文档": "documents",
+      "我的文档": "documents",
+      "documents": "documents",
+      "下载": "downloads",
+      "下载文件夹": "downloads",
+      "downloads": "downloads",
+      "主目录": "home",
+      "用户目录": "home",
+      "home": "home"
+    },
+    "search_engine": {
+      "百度": "baidu",
+      "baidu": "baidu",
+      "必应": "bing",
+      "bing": "bing",
+      "谷歌": "google",
+      "google": "google"
+    }
+  },
+  "rules": [
+    {
+      "id": "open_browser",
+      "language": "zh-CN",
+      "patterns": [
+        "打开浏览器",
+        "启动浏览器",
+        "开浏览器",
+        "我要上网",
+        "上网"
+      ],
+      "intent": "open_application",
+      "parameters": {
+        "app_id": {
+          "source": "constant",
+          "value": "browser"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 10,
+      "category": "app",
+      "description": "启动系统默认浏览器。低风险，直接执行。"
+    },
+    {
+      "id": "open_application_by_name",
+      "language": "zh-CN",
+      "patterns": [
+        "打开{app}",
+        "启动{app}",
+        "运行{app}"
+      ],
+      "intent": "open_application",
+      "parameters": {
+        "app_raw": {
+          "source": "slot",
+          "slot": "app",
+          "required": true
+        },
+        "app_id": {
+          "source": "alias_map",
+          "table": "app"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 5,
+      "category": "app",
+      "description": "按别名启动应用。别名表见本文件 aliases.app —— 只有表里列出的应用才能启动，这是刻意的收窄，避免「打开任意程序」变成一条万能后门。"
+    },
+    {
+      "id": "open_folder",
+      "language": "zh-CN",
+      "patterns": [
+        "打开{folder}",
+        "打开{folder}文件夹",
+        "去{folder}"
+      ],
+      "intent": "open_path",
+      "parameters": {
+        "folder_raw": {
+          "source": "slot",
+          "slot": "folder",
+          "required": true
+        },
+        "target": {
+          "source": "alias_map",
+          "table": "folder"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 8,
+      "category": "file",
+      "description": "打开桌面/文档/下载等标准目录。"
+    },
+    {
+      "id": "open_path_absolute",
+      "language": "zh-CN",
+      "patterns": [
+        "打开路径{path}",
+        "打开文件{path}",
+        "打开{path}"
+      ],
+      "intent": "open_path",
+      "parameters": {
+        "target": {
+          "source": "slot",
+          "slot": "path",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 3,
+      "category": "file",
+      "description": "打开用户给出完整路径的文件或目录。路径必须落在允许目录白名单内，否则会被拒绝（SRS 4.3）。"
+    },
+    {
+      "id": "reveal_path",
+      "language": "zh-CN",
+      "patterns": [
+        "定位{path}",
+        "在文件夹中显示{path}",
+        "打开{path}所在目录"
+      ],
+      "intent": "reveal_path",
+      "parameters": {
+        "target": {
+          "source": "slot",
+          "slot": "path",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 5,
+      "category": "file",
+      "description": "在文件管理器中选中并显示目标文件。"
+    },
+    {
+      "id": "web_search",
+      "language": "zh-CN",
+      "patterns": [
+        "搜索{query}",
+        "搜一下{query}",
+        "查一下{query}",
+        "帮我搜索{query}",
+        "百度{query}",
+        "搜索关键词{query}"
+      ],
+      "intent": "web_search",
+      "parameters": {
+        "query": {
+          "source": "slot",
+          "slot": "query",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 20,
+      "category": "search",
+      "description": "用默认搜索引擎搜索。注意：这会发起网络请求，受「网络权限模式」约束 —— 离线模式下会被拒绝并说明原因（SRS 4.9）。"
+    },
+    {
+      "id": "translate_auto",
+      "language": "zh-CN",
+      "patterns": [
+        "翻译{text}",
+        "把{text}翻译一下",
+        "翻译一下{text}"
+      ],
+      "intent": "translate",
+      "parameters": {
+        "text": {
+          "source": "slot",
+          "slot": "text",
+          "required": true
+        },
+        "target_lang": {
+          "source": "constant",
+          "value": "en-US"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "translate",
+      "description": "中译英。在线翻译需要联网；未配置翻译后端时会明确说明「翻译服务不可用」而不是假装成功。"
+    },
+    {
+      "id": "translate_to_zh",
+      "language": "zh-CN",
+      "patterns": [
+        "翻译成中文{text}",
+        "把{text}翻译成中文",
+        "{text}翻译成中文"
+      ],
+      "intent": "translate",
+      "parameters": {
+        "text": {
+          "source": "slot",
+          "slot": "text",
+          "required": true
+        },
+        "target_lang": {
+          "source": "constant",
+          "value": "zh-CN"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 25,
+      "category": "translate",
+      "description": "译成中文。优先级高于 translate_auto，因为模式更具体。"
+    },
+    {
+      "id": "translate_to_ja",
+      "language": "zh-CN",
+      "patterns": [
+        "翻译成日文{text}",
+        "把{text}翻译成日文",
+        "翻译成日语{text}"
+      ],
+      "intent": "translate",
+      "parameters": {
+        "text": {
+          "source": "slot",
+          "slot": "text",
+          "required": true
+        },
+        "target_lang": {
+          "source": "constant",
+          "value": "ja-JP"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 25,
+      "category": "translate",
+      "description": "译成日文。"
+    },
+    {
+      "id": "start_recording",
+      "language": "zh-CN",
+      "patterns": [
+        "开始录音",
+        "录音",
+        "录一段",
+        "帮我录音"
+      ],
+      "intent": "record_audio",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "start"
+        }
+      },
+      "risk_level": "medium",
+      "confirmation": true,
+      "priority": 20,
+      "category": "system",
+      "description": "开始录音。medium + confirmation=true 是刻意的：录音涉及隐私，即使风险不高也必须让用户明确点一次同意，且录音中界面会持续显示提示（SRS 4.11）。"
+    },
+    {
+      "id": "stop_recording",
+      "language": "zh-CN",
+      "patterns": [
+        "停止录音",
+        "结束录音",
+        "别录了"
+      ],
+      "intent": "record_audio",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "stop"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 30,
+      "category": "system",
+      "description": "停止录音。停止不需要确认 —— 让用户能随时一键停下，这本身就是隐私保护的一部分。"
+    },
+    {
+      "id": "system_info",
+      "language": "zh-CN",
+      "patterns": [
+        "系统信息",
+        "查看系统信息",
+        "我的系统",
+        "电脑配置"
+      ],
+      "intent": "system_info",
+      "parameters": {},
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 10,
+      "category": "system",
+      "description": "显示操作系统、架构、能力探测结果。"
+    },
+    {
+      "id": "pet_hide",
+      "language": "zh-CN",
+      "patterns": [
+        "隐藏",
+        "隐藏桌宠",
+        "你先躲起来",
+        "退下"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "hide"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "pet",
+      "description": "隐藏桌宠窗口（可从托盘或快捷键叫回来）。"
+    },
+    {
+      "id": "pet_show",
+      "language": "zh-CN",
+      "patterns": [
+        "显示",
+        "显示桌宠",
+        "出来",
+        "出来吧"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "show"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "pet",
+      "description": "显示桌宠窗口。"
+    },
+    {
+      "id": "pet_open_settings",
+      "language": "zh-CN",
+      "patterns": [
+        "设置",
+        "打开设置",
+        "打开配置",
+        "配置"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "settings"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 25,
+      "category": "pet",
+      "description": "打开设置窗口。优先级高于「打开设置」被 open_application_by_name 抢走（那是打开 Windows 设置）。"
+    },
+    {
+      "id": "pet_open_history",
+      "language": "zh-CN",
+      "patterns": [
+        "历史",
+        "历史记录",
+        "查看历史",
+        "打开历史记录"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "history"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 20,
+      "category": "pet",
+      "description": "打开历史记录窗口。"
+    },
+    {
+      "id": "help",
+      "language": "zh-CN",
+      "patterns": [
+        "帮助",
+        "你能做什么",
+        "你会什么",
+        "怎么用",
+        "使用说明"
+      ],
+      "intent": "help",
+      "parameters": {},
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 30,
+      "category": "pet",
+      "description": "显示能力清单与使用方式。"
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "schema_version": 1,
+  "//": "======================================================================",
+  "//_1": "Desktop Companion — 組み込みコマンドルール（日本語）",
+  "//_2": "フィールドの詳細は zh-CN.json を参照してください。",
+  "//_3": "======================================================================",
+  "aliases": {
+    "app": {
+      "ブラウザ": "browser",
+      "ブラウザー": "browser",
+      "browser": "browser",
+      "クローム": "chrome",
+      "chrome": "chrome",
+      "エッジ": "edge",
+      "edge": "edge",
+      "ファイアフォックス": "firefox",
+      "firefox": "firefox",
+      "メモ帳": "notepad",
+      "notepad": "notepad",
+      "電卓": "calculator",
+      "calculator": "calculator",
+      "エクスプローラー": "explorer",
+      "explorer": "explorer",
+      "ターミナル": "terminal",
+      "コマンドプロンプト": "terminal",
+      "terminal": "terminal",
+      "タスクマネージャー": "taskmgr",
+      "ペイント": "mspaint",
+      "コントロールパネル": "control",
+      "設定": "settings",
+      "settings": "settings"
+    },
+    "folder": {
+      "デスクトップ": "desktop",
+      "desktop": "desktop",
+      "ドキュメント": "documents",
+      "書類": "documents",
+      "documents": "documents",
+      "ダウンロード": "downloads",
+      "downloads": "downloads",
+      "ホーム": "home",
+      "home": "home"
+    },
+    "search_engine": {
+      "バイドゥ": "baidu",
+      "baidu": "baidu",
+      "ビング": "bing",
+      "bing": "bing",
+      "グーグル": "google",
+      "google": "google"
+    }
+  },
+  "rules": [
+    {
+      "id": "open_browser",
+      "language": "ja-JP",
+      "patterns": [
+        "ブラウザを開いて",
+        "ブラウザを起動",
+        "ブラウザ起動",
+        "インターネット"
+      ],
+      "intent": "open_application",
+      "parameters": {
+        "app_id": {
+          "source": "constant",
+          "value": "browser"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 10,
+      "category": "app",
+      "description": "既定のブラウザを起動します。"
+    },
+    {
+      "id": "open_application_by_name",
+      "language": "ja-JP",
+      "patterns": [
+        "{app}を開いて",
+        "{app}を起動",
+        "{app}を立ち上げて"
+      ],
+      "intent": "open_application",
+      "parameters": {
+        "app_raw": {
+          "source": "slot",
+          "slot": "app",
+          "required": true
+        },
+        "app_id": {
+          "source": "alias_map",
+          "table": "app"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 5,
+      "category": "app",
+      "description": "別名テーブルに登録されたアプリを起動します。"
+    },
+    {
+      "id": "open_folder",
+      "language": "ja-JP",
+      "patterns": [
+        "{folder}を開いて",
+        "{folder}フォルダを開いて",
+        "{folder}へ移動"
+      ],
+      "intent": "open_path",
+      "parameters": {
+        "folder_raw": {
+          "source": "slot",
+          "slot": "folder",
+          "required": true
+        },
+        "target": {
+          "source": "alias_map",
+          "table": "folder"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 8,
+      "category": "file",
+      "description": "標準フォルダを開きます。"
+    },
+    {
+      "id": "open_path_absolute",
+      "language": "ja-JP",
+      "patterns": [
+        "パス{path}を開いて",
+        "ファイル{path}を開いて"
+      ],
+      "intent": "open_path",
+      "parameters": {
+        "target": {
+          "source": "slot",
+          "slot": "path",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 3,
+      "category": "file",
+      "description": "明示されたパスを開きます。許可ディレクトリ内である必要があります。"
+    },
+    {
+      "id": "reveal_path",
+      "language": "ja-JP",
+      "patterns": [
+        "{path}を表示",
+        "{path}の場所を開いて",
+        "フォルダ内で{path}を表示"
+      ],
+      "intent": "reveal_path",
+      "parameters": {
+        "target": {
+          "source": "slot",
+          "slot": "path",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 5,
+      "category": "file",
+      "description": "ファイルマネージャーで対象を選択表示します。"
+    },
+    {
+      "id": "web_search",
+      "language": "ja-JP",
+      "patterns": [
+        "{query}を検索",
+        "{query}について調べて",
+        "{query}をググって",
+        "検索{query}"
+      ],
+      "intent": "web_search",
+      "parameters": {
+        "query": {
+          "source": "slot",
+          "slot": "query",
+          "required": true
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 20,
+      "category": "search",
+      "description": "ウェブ検索を実行します。ネットワーク権限モードの制約を受けます。"
+    },
+    {
+      "id": "translate_auto",
+      "language": "ja-JP",
+      "patterns": [
+        "{text}を翻訳して",
+        "{text}を訳して",
+        "翻訳{text}"
+      ],
+      "intent": "translate",
+      "parameters": {
+        "text": {
+          "source": "slot",
+          "slot": "text",
+          "required": true
+        },
+        "target_lang": {
+          "source": "constant",
+          "value": "zh-CN"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "translate",
+      "description": "中国語に翻訳します。"
+    },
+    {
+      "id": "translate_to_en",
+      "language": "ja-JP",
+      "patterns": [
+        "{text}を英語に翻訳して",
+        "{text}を英語に訳して"
+      ],
+      "intent": "translate",
+      "parameters": {
+        "text": {
+          "source": "slot",
+          "slot": "text",
+          "required": true
+        },
+        "target_lang": {
+          "source": "constant",
+          "value": "en-US"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 25,
+      "category": "translate",
+      "description": "英語に翻訳します。"
+    },
+    {
+      "id": "start_recording",
+      "language": "ja-JP",
+      "patterns": [
+        "録音を開始",
+        "録音して",
+        "録音スタート"
+      ],
+      "intent": "record_audio",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "start"
+        }
+      },
+      "risk_level": "medium",
+      "confirmation": true,
+      "priority": 20,
+      "category": "system",
+      "description": "録音を開始します。必ず明示的な確認が必要です。"
+    },
+    {
+      "id": "stop_recording",
+      "language": "ja-JP",
+      "patterns": [
+        "録音を停止",
+        "録音を終了",
+        "録音やめて"
+      ],
+      "intent": "record_audio",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "stop"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 30,
+      "category": "system",
+      "description": "録音を停止します。確認は不要です。"
+    },
+    {
+      "id": "system_info",
+      "language": "ja-JP",
+      "patterns": [
+        "システム情報",
+        "システム情報を表示",
+        "環境を教えて"
+      ],
+      "intent": "system_info",
+      "parameters": {},
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 10,
+      "category": "system",
+      "description": "OS とアーキテクチャ、機能検出の結果を表示します。"
+    },
+    {
+      "id": "pet_hide",
+      "language": "ja-JP",
+      "patterns": [
+        "隠れて",
+        "非表示",
+        "下がって"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "hide"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "pet",
+      "description": "ペットウィンドウを隠します。"
+    },
+    {
+      "id": "pet_show",
+      "language": "ja-JP",
+      "patterns": [
+        "出てきて",
+        "表示して",
+        "現れて"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "show"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 15,
+      "category": "pet",
+      "description": "ペットウィンドウを表示します。"
+    },
+    {
+      "id": "pet_open_settings",
+      "language": "ja-JP",
+      "patterns": [
+        "設定を開いて",
+        "設定画面",
+        "環境設定"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "settings"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 25,
+      "category": "pet",
+      "description": "設定ウィンドウを開きます。"
+    },
+    {
+      "id": "pet_open_history",
+      "language": "ja-JP",
+      "patterns": [
+        "履歴",
+        "履歴を開いて",
+        "履歴を表示"
+      ],
+      "intent": "pet_control",
+      "parameters": {
+        "action": {
+          "source": "constant",
+          "value": "history"
+        }
+      },
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 20,
+      "category": "pet",
+      "description": "履歴ウィンドウを開きます。"
+    },
+    {
+      "id": "help",
+      "language": "ja-JP",
+      "patterns": [
+        "ヘルプ",
+        "何ができる",
+        "使い方",
+        "ヘルプを表示"
+      ],
+      "intent": "help",
+      "parameters": {},
+      "risk_level": "low",
+      "confirmation": false,
+      "priority": 30,
+      "category": "pet",
+      "description": "できることの一覧と使い方を表示します。"
+    }
+  ]
+}
